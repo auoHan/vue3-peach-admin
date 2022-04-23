@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import * as path from 'path'
 import viteCompression from 'vite-plugin-compression'
 import autoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
   plugins: [
@@ -17,8 +19,25 @@ export default defineConfig({
     }),
     autoImport({
       imports: ['vue', 'vue-router', 'pinia'], // 自动导入vue和vue-router和pinia相关函数
+      resolvers: [
+        ElementPlusResolver({
+          importStyle: 'sass'
+        })
+      ],
       dts: 'src/auto-import.d.ts' // 生成 `auto-import.d.ts` 全局声明
-    })
+    }),
+    Components({
+      dts: true,
+      types: [{
+        from: 'vue-router',
+        names: ['RouterLink', 'RouterView'],
+      }],
+      resolvers: [
+        ElementPlusResolver({
+          importStyle: 'sass'
+        })
+      ],
+    }),
   ],
   resolve: {
     alias: {
@@ -36,7 +55,7 @@ export default defineConfig({
         '@import "@/assets/scss/globalVariable1.scss";@import "@/assets/scss/globalVariable2.scss";'
         这种格式
          */
-        additionalData: '@import "@/assets/style/index.scss";'
+        additionalData: `@use "@/styles/element/index.scss" as *;`
       }
     }
   },
